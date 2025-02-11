@@ -5,7 +5,7 @@ const BreadCrumps = ({data}) => {
   return (
     <div className='flex items-center py-4 overflow-x-auto whitespace-nowrap'>
         {data.map((item ,index)=> (
-            <div className='text-black opacity-50 text-xs'>
+            <div className='text-black opacity-50 text-xs font-roboto md:text-sm'>
                 <Link to={item.Link}>
                 {item.name}
                 </Link>
