@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 
-const CommentForm = ({ btnLabel , formSubmitHandler }) => {
+const CommentForm = ({ btnLabel, formSubmitHandler }) => {
   const [value, setvalue] = useState("");
 
   const submitHandler = (e) => {
     e.preventDefault();
-    formSubmitHandler();
+    formSubmitHandler(value);
+    setvalue("");
   };
   return (
     <form onSubmit={submitHandler}>
