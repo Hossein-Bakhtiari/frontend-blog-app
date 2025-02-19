@@ -17,6 +17,24 @@ const CommentsContainer = ({ classname, logginedUserId }) => {
     })();
   }, []);
 
+  const deleteCommentHandler = (commentId) => {
+    const updatedComments = comments.filter((comment) => {
+      return comment._id !== commentId
+    })
+    setComments(updatedComments);
+  }
+
+  const updateCommentHandler = (value, commentId) => {
+    const updatedComments = comments.map((comment) => {
+      if (comment._id === commentId) {
+        return { ...comment, desc: value };
+      }
+      return comment;
+    });
+    setComments(updatedComments);
+    setAffectedComent(null);
+  };
+
   const addCommentHandler = (value, parent = null, replyOnUser = null) => {
     const newComment = {
       _id: "10",
@@ -33,6 +51,7 @@ const CommentsContainer = ({ classname, logginedUserId }) => {
     setComments((curState) => {
       return [newComment, ...curState];
     });
+    setAffectedComent(null);
   };
 
   return (
@@ -50,6 +69,8 @@ const CommentsContainer = ({ classname, logginedUserId }) => {
             affectedComment={affectedComment}
             setAffectedComent={setAffectedComent}
             addComment={addCommentHandler}
+            updateComment={updateCommentHandler}
+            deleteComment={deleteCommentHandler}
           />
         ))}
       </div>

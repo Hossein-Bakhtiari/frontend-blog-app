@@ -4,8 +4,9 @@ const CommentForm = ({
   btnLabel,
   formSubmitHandler,
   formCancelHandler = null,
+  initialText = ""
 }) => {
-  const [value, setvalue] = useState("");
+  const [value, setvalue] = useState(initialText);
 
   const submitHandler = (e) => {
     e.preventDefault();
