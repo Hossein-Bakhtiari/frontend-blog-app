@@ -19,10 +19,20 @@ const CommentsContainer = ({ classname, logginedUserId }) => {
 
   const deleteCommentHandler = (commentId) => {
     const updatedComments = comments.filter((comment) => {
-      return comment._id !== commentId
-    })
+      return comment._id !== commentId;
+    });
     setComments(updatedComments);
-  }
+  };
+
+  const getRepliesHandler = (commentId) => {
+    return comments
+      .filter((comment) => comment.parent === commentId)
+      .sort((a, b) => {
+        return (
+          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+        );
+      });
+  };
 
   const updateCommentHandler = (value, commentId) => {
     const updatedComments = comments.map((comment) => {
@@ -37,7 +47,7 @@ const CommentsContainer = ({ classname, logginedUserId }) => {
 
   const addCommentHandler = (value, parent = null, replyOnUser = null) => {
     const newComment = {
-      _id: "10",
+      _id: Math.random().toString(),
       user: {
         _id: "a",
         name: "Hossein Bakhtiari",
@@ -46,7 +56,7 @@ const CommentsContainer = ({ classname, logginedUserId }) => {
       post: "1",
       parent: parent,
       replyOnUser: replyOnUser,
-      createdAt: "2022-12-31T17:22:05.092+0000",
+      createdAt: new Date().toISOString(),
     };
     setComments((curState) => {
       return [newComment, ...curState];
@@ -71,6 +81,7 @@ const CommentsContainer = ({ classname, logginedUserId }) => {
             addComment={addCommentHandler}
             updateComment={updateCommentHandler}
             deleteComment={deleteCommentHandler}
+            replies={getRepliesHandler(comment._id)}
           />
         ))}
       </div>

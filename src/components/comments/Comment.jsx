@@ -11,6 +11,7 @@ const Comment = ({
   parentId = null,
   updateComment,
   deleteComment,
+  replies,
 }) => {
   const isUserLoggined = Boolean(logginedUserId);
   const commentBelongsToUser = logginedUserId === comment.user._id;
@@ -55,7 +56,7 @@ const Comment = ({
             btnLabel="Update"
             formSubmitHandler={(value) => updateComment(value, comment._id)}
             formCancelHandler={() => setAffectedComent(null)}
-            initialText ={comment.desc}
+            initialText={comment.desc}
           />
         )}
         <div className="flex items-center gap-x-3 text-dark-light text-sm font-roboto mt-3 mb-3">
@@ -82,7 +83,10 @@ const Comment = ({
                 <FiEdit2 className="w-4 h-auto" />
                 <span>Edit</span>
               </button>
-              <button className="flex items-center space-x-2" onClick={() => deleteComment(comment._id)}>
+              <button
+                className="flex items-center space-x-2"
+                onClick={() => deleteComment(comment._id)}
+              >
                 <FiTrash className="w-4 h-auto" />
                 <span>Delete</span>
               </button>
@@ -97,6 +101,24 @@ const Comment = ({
             }
             formCancelHandler={() => setAffectedComent(null)}
           />
+        )}
+        {replies.length > 0 && (
+          <div>
+            {replies.map((reply) => (
+              <Comment
+                key={reply._id}
+                addComment={addComment}
+                affectedComment={affectedComment}
+                setAffectedComent={setAffectedComent}
+                comment={reply}
+                deleteComment={deleteComment}
+                logginedUserId={logginedUserId}
+                replies={[]}
+                updateComment={updateComment}
+                parentId={comment._id}
+              />
+            ))}
+          </div>
         )}
       </div>
     </div>
