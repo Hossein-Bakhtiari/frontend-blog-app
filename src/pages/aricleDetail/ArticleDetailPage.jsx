@@ -80,7 +80,7 @@ const ArticleDetailPage = () => {
               lectus proin.
             </p>
           </div>
-          <CommentsContainer classname="mt-10"/>
+          <CommentsContainer classname="mt-10" logginedUserId="a"/>
         </article>
         <SuggestedPosts
           header="Latest Article"
