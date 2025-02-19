@@ -5,6 +5,7 @@ import { images } from "../../constant";
 import { Link } from "react-router-dom";
 import SuggestedPosts from "./container/SuggestedPosts";
 import CommentsContainer from "../../components/comments/CommentsContainer";
+import SocialShareButtons from "../../components/SocialShareButtons";
 
 const breadCrumpsDate = [
   { name: "Home", Link: "/" },
@@ -52,7 +53,7 @@ const tagData = [
 const ArticleDetailPage = () => {
   return (
     <MainLayout>
-      <section className="container mx-auto max-w-5xl flex flex-col px-5 py-5 lg:flex-row lg:gap-x-5 lg:items-start" >
+      <section className="container mx-auto max-w-5xl flex flex-col px-5 py-5 lg:flex-row lg:gap-x-5 lg:items-start">
         <article className="flex-1">
           <BreadCrumps data={breadCrumpsDate} />
           <img
@@ -80,14 +81,25 @@ const ArticleDetailPage = () => {
               lectus proin.
             </p>
           </div>
-          <CommentsContainer classname="mt-10" logginedUserId="a"/>
+          <CommentsContainer classname="mt-10" logginedUserId="a" />
         </article>
-        <SuggestedPosts
-          header="Latest Article"
-          posts={postData}
-          tags={tagData}
-          className="mt-8 lg:mt-0 max-w-xs"
-        />
+        <div>
+          <SuggestedPosts
+            header="Latest Article"
+            posts={postData}
+            tags={tagData}
+            className="mt-8 lg:mt-0 max-w-xs"
+          />
+          <div className="mt-7">
+            <h2 className="font-roboto font-medium text-dark-hard mb-4 text-xl">
+              Share on:
+            </h2>
+            <SocialShareButtons
+              url={encodeURI("https://github.com/Hossein-Bakhtiari")}
+              title={encodeURIComponent("My Github")}
+            />
+          </div>
+        </div>
       </section>
     </MainLayout>
   );
