@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import HomePage from "./pages/home/HomePage";
 import ArticleDetailPage from "./pages/aricleDetail/ArticleDetailPage";
+import RegisterPage from "./pages/register/RegisterPage";
 
 
 function App() {
@@ -10,6 +11,8 @@ function App() {
       <Routes>
         <Route index path="/" element={<HomePage />}/>
         <Route path="/blog/:id" element={<ArticleDetailPage />}/>
+        <Route path="/register" element={<RegisterPage/>}/>
+
       </Routes>
     </div>
   );
