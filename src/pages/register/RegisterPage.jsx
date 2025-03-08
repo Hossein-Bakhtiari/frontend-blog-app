@@ -1,8 +1,24 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { signup } from "../../services/index/users";
+import toast from "react-hot-toast";
 
 const RegisterPage = () => {
+  const { mutate, isLoading } = useMutation({
+    mutationFn: ({ name, email, password }) => {
+      return signup({ name, email, password });
+    },
+    onSuccess: (data) => {
+      console.log(data);
+    },
+    onError: (error) => {
+      toast.error(error.message)
+      console.log(error);
+    },
+  });
+
   const {
     register,
     handleSubmit,
@@ -18,10 +34,11 @@ const RegisterPage = () => {
     mode: "onChange",
   });
   const submitHandler = (data) => {
-    console.log(data)
+    const { name, email, password } = data;
+    mutate({ name, email, password });
   };
 
-  const password = watch('password');
+  const password = watch("password");
 
   return (
     <section className="container mx-auto px-5 py-10">
@@ -139,17 +156,18 @@ const RegisterPage = () => {
               {...register("confirmPassword", {
                 minLength: {
                   value: 6,
-                  message: "Confirm Password length must be at least 6 charcters",
+                  message:
+                    "Confirm Password length must be at least 6 charcters",
                 },
                 required: {
                   value: true,
                   message: "Confirm password is required",
                 },
                 validate: (value) => {
-                    if(value !== password) {
-                      return "The password does not match"
-                    }
-                }
+                  if (value !== password) {
+                    return "The password does not match";
+                  }
+                },
               })}
               placeholder="Enter confirm Password"
               className={`placeholder:text-[#959ead] text-dark-hard rounded-lg px-5 
@@ -157,7 +175,7 @@ const RegisterPage = () => {
                   errors.confirmPassword ? "border-red-500" : "border-[#c3cad9]"
                 } `}
             />
-             {errors.confirmPassword?.message && (
+            {errors.confirmPassword?.message && (
               <p className="text-red-500 text-xs mt-1">
                 {errors.confirmPassword?.message}
               </p>
