@@ -5,6 +5,7 @@ import { AiOutlineClose } from "react-icons/ai";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../store/actions/user";
+import { useNavigate } from "react-router-dom";
 
 const NavItemsInfo = [
   { name: "Home", type: "link" },
@@ -68,6 +69,7 @@ const NavItem = ({ item }) => {
 };
 
 const Header = () => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [navIsVisible, setNavIsVisible] = useState(false);
   const userState = useSelector((state) => state.user);
@@ -147,8 +149,11 @@ const Header = () => {
               </div>
             </div>
           ) : (
-            <button className=" mt-5 lg:mt-0 border-2 border-blue-500 rounded-full text-blue-500 font-semibold
-             px-6 py-2 hover:bg-blue-500 hover:text-white transition-all duration-100 ">
+            <button
+              onClick={() => navigate("/login")}
+              className=" mt-5 lg:mt-0 border-2 border-blue-500 rounded-full text-blue-500 font-semibold
+              px-6 py-2 hover:bg-blue-500 hover:text-white transition-all duration-100 "
+            >
               Sign in
             </button>
           )}
