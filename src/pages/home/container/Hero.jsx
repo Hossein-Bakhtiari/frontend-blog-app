@@ -1,5 +1,5 @@
 import React from "react";
-import { images } from "../../constant";
+import { images } from "../../../constant";
 import { FiSearch } from "react-icons/fi";
 
 const Hero = () => {

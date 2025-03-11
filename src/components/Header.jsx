@@ -121,7 +121,7 @@ const Header = () => {
              px-6 py-2 hover:bg-blue-500 hover:text-white transition-all duration-100"
                     onClick={() => setProfilDropDown(!profileDropDown)}
                   >
-                    <span>Profile</span>
+                    <span>Account</span>
                     <MdKeyboardArrowDown />
                   </button>
                   <div
@@ -131,10 +131,11 @@ const Header = () => {
                   >
                     <ul className="bg-dark-soft lg:bg-transparent text-center flex flex-col shadow-lg rounded-lg overflow-hidden">
                       <button
+                        onClick={() => navigate("/profile")}
                         type="button"
                         className="hover:bg-dark-hard hover:text-white px-4 py-2 text-white lg:text-dark-soft"
                       >
-                        Dashboard
+                        Profile Page
                       </button>
                       <button
                         onClick={logoutHandler}
