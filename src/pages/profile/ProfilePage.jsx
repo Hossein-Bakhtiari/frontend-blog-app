@@ -2,14 +2,17 @@ import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useQuery } from "@tanstack/react-query";
-import { getUserProfile } from "../../services/index/users.js";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getUserProfile, updateProfile } from "../../services/index/users.js";
 import MainLayout from "../../components/MainLayout.jsx";
 import ProfilePicture from "../../components/ProfilePicture.jsx";
+import toast from "react-hot-toast";
+import { userActions } from "../../store/reducers/userReducer.js";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const userState = useSelector((state) => state.user);
 
   const {
@@ -21,6 +24,29 @@ const ProfilePage = () => {
       return getUserProfile({ token: userState.userInfo.token });
     },
     queryKey: ["profile"],
+  });
+
+  const { mutate, isLoading } = useMutation({
+    mutationFn: ({ name, email, password }) => {
+      return updateProfile({
+        token: userState.userInfo.token,
+        userData: {
+          name,
+          email,
+          password,
+        },
+      });
+    },
+    onSuccess: (data) => {
+      dispatch(userActions.setUserInfo(data));
+      localStorage.setItem("account", JSON.stringify(data));
+      queryClient.invalidateQueries(["profile"]);
+      toast.success("Profile is updated");
+    },
+    onError: (error) => {
+      toast.error(error.message);
+      console.log(error);
+    },
   });
 
   useEffect(() => {
@@ -45,13 +71,16 @@ const ProfilePage = () => {
     },
     mode: "onChange",
   });
-  const submitHandler = (data) => {};
+  const submitHandler = (data) => {
+    const { name, email, password } = data;
+    mutate({ name, email, password });
+  };
 
   return (
     <MainLayout>
       <section className="container mx-auto px-5 py-10">
         <div className="w-full max-w-sm m-auto ">
-          <ProfilePicture avatar={profileDate?.avatar} />
+          <ProfilePicture avatar={profileDate?.name} />
           <form onSubmit={handleSubmit(submitHandler)}>
             <div className="flex flex-col mb-6 w-full">
               <label
@@ -122,22 +151,13 @@ const ProfilePage = () => {
                 htmlFor="password"
                 className="text-[#5a7184] font-semibold block"
               >
-                Password
+                New Password (optional)
               </label>
               <input
                 type="password"
                 id="password"
-                {...register("password", {
-                  minLength: {
-                    value: 6,
-                    message: "Password length must be at least 6 charcters",
-                  },
-                  required: {
-                    value: true,
-                    message: "password is required",
-                  },
-                })}
-                placeholder="Enter Password"
+                {...register("password")}
+                placeholder="Enter a New Password"
                 className={`placeholder:text-[#959ead] text-dark-hard rounded-lg px-5 
                 py-4 font-semibold block outline-none border  ${
                   errors.password ? "border-red-500" : "border-[#c3cad9]"
