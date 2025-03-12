@@ -76,3 +76,32 @@ export const updateProfile = async ({ token, userData }) => {
     throw new Error(error.message);
   }
 };
+
+export const updateProfilePicture = async ({ token, file }) => {
+  const formData = new FormData();
+  formData.append("profilePicture", file);
+
+  try {
+    const response = await fetch(
+      "http://localhost:5000/api/users/updateProfilePicture",
+      {
+        method: "PUT",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to update profile picture");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error updating profile picture:", error);
+    throw error;
+  }
+};

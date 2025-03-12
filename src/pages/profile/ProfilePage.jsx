@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,7 +16,7 @@ const ProfilePage = () => {
   const userState = useSelector((state) => state.user);
 
   const {
-    data: profileDate,
+    data: profileData,
     isLoading: profileIsLoading,
     error: profileError,
   } = useQuery({
@@ -26,7 +26,7 @@ const ProfilePage = () => {
     queryKey: ["profile"],
   });
 
-  const { mutate, isLoading } = useMutation({
+  const { mutate, isLoading: updateProfileISLoading } = useMutation({
     mutationFn: ({ name, email, password }) => {
       return updateProfile({
         token: userState.userInfo.token,
@@ -65,12 +65,17 @@ const ProfilePage = () => {
       email: "",
       password: "",
     },
-    values: {
-      name: profileIsLoading ? "" : profileDate.name,
-      email: profileIsLoading ? "" : profileDate.email,
-    },
+    values: useMemo(() => {
+      return {
+        name: profileIsLoading ? "" : profileData.name,
+        email: profileIsLoading ? "" : profileData.email,
+      };
+    }, [profileData?.email, profileData?.name, profileIsLoading]),
     mode: "onChange",
   });
+
+
+  
   const submitHandler = (data) => {
     const { name, email, password } = data;
     mutate({ name, email, password });
@@ -79,8 +84,8 @@ const ProfilePage = () => {
   return (
     <MainLayout>
       <section className="container mx-auto px-5 py-10">
-        <div className="w-full max-w-sm m-auto ">
-          <ProfilePicture avatar={profileDate?.name} />
+        <div className="w-full max-w-sm mx-auto">
+          <ProfilePicture avatar={profileData?.avatar} />
           <form onSubmit={handleSubmit(submitHandler)}>
             <div className="flex flex-col mb-6 w-full">
               <label
@@ -95,18 +100,17 @@ const ProfilePage = () => {
                 {...register("name", {
                   minLength: {
                     value: 1,
-                    message: "Name length must be at least 1 charcter",
+                    message: "Name length must be at least 1 character",
                   },
                   required: {
                     value: true,
                     message: "Name is required",
                   },
                 })}
-                placeholder="Enter Name"
-                className={`placeholder:text-[#959ead] text-dark-hard rounded-lg px-5 
-                    py-4 font-semibold block outline-none border ${
-                      errors.name ? "border-red-500" : "border-[#c3cad9]"
-                    }`}
+                placeholder="Enter name"
+                className={`placeholder:text-[#959ead] text-dark-hard mt-3 rounded-lg px-5 py-4 font-semibold block outline-none border ${
+                  errors.name ? "border-red-500" : "border-[#c3cad9]"
+                }`}
               />
               {errors.name?.message && (
                 <p className="text-red-500 text-xs mt-1">
@@ -122,23 +126,23 @@ const ProfilePage = () => {
                 Email
               </label>
               <input
-                type="text"
+                type="email"
                 id="email"
                 {...register("email", {
                   pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Enter a vaild email address",
+                    value:
+                      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                    message: "Enter a valid email",
                   },
                   required: {
                     value: true,
                     message: "Email is required",
                   },
                 })}
-                placeholder="Enter Email"
-                className={`placeholder:text-[#959ead] text-dark-hard rounded-lg px-5 
-                    py-4 font-semibold block outline-none border  ${
-                      errors.email ? "border-red-500" : "border-[#c3cad9]"
-                    } `}
+                placeholder="Enter email"
+                className={`placeholder:text-[#959ead] text-dark-hard mt-3 rounded-lg px-5 py-4 font-semibold block outline-none border ${
+                  errors.email ? "border-red-500" : "border-[#c3cad9]"
+                }`}
               />
               {errors.email?.message && (
                 <p className="text-red-500 text-xs mt-1">
@@ -157,11 +161,10 @@ const ProfilePage = () => {
                 type="password"
                 id="password"
                 {...register("password")}
-                placeholder="Enter a New Password"
-                className={`placeholder:text-[#959ead] text-dark-hard rounded-lg px-5 
-                py-4 font-semibold block outline-none border  ${
+                placeholder="Enter new password"
+                className={`placeholder:text-[#959ead] text-dark-hard mt-3 rounded-lg px-5 py-4 font-semibold block outline-none border ${
                   errors.password ? "border-red-500" : "border-[#c3cad9]"
-                } `}
+                }`}
               />
               {errors.password?.message && (
                 <p className="text-red-500 text-xs mt-1">
@@ -169,14 +172,12 @@ const ProfilePage = () => {
                 </p>
               )}
             </div>
-
             <button
               type="submit"
-              disabled={!isValid || profileIsLoading}
-              className="bg-primary text-white font-bold text-lg py-4 px-8
-            w-full rounded-lg mb-6 disabled:opacity-70 disabled:cursor-not-allowed"
+              disabled={!isValid || profileIsLoading || updateProfileISLoading}
+              className="bg-primary text-white font-bold text-lg py-4 px-8 w-full rounded-lg mb-6 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Register
+              Update
             </button>
           </form>
         </div>
