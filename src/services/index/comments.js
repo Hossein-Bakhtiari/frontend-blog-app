@@ -41,7 +41,7 @@ export const updateComment = async ({ token, desc, check, commentId }) => {
     };
 
     const { data } = await axios.put(
-      `"http://localhost:5000/api/comments"/${commentId}`,
+      `http://localhost:5000/api/comments/${commentId}`,
       {
         desc,
         check,
