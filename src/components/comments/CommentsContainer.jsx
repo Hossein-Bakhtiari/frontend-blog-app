@@ -3,7 +3,11 @@ import CommentForm from "./CommentForm";
 import { getCommentsData } from "../../data/comments";
 import Comment from "./Comment";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createNewComment, updateComment } from "../../services/index/comments";
+import {
+  createNewComment,
+  deleteComment,
+  updateComment,
+} from "../../services/index/comments";
 import toast from "react-hot-toast";
 import { useSelector } from "react-redux";
 
@@ -14,7 +18,7 @@ const CommentsContainer = ({
   postSlug,
 }) => {
   console.log(comments);
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const [affectedComment, setAffectedComent] = useState(null);
   const userState = useSelector((state) => state.user);
 
@@ -48,7 +52,23 @@ const CommentsContainer = ({
     },
   });
 
-  const deleteCommentHandler = (commentId) => {};
+  const { mutate: mutateDeleteComment } = useMutation({
+    mutationFn: ({ token, desc, commentId }) => {
+      return deleteComment({ token, commentId });
+    },
+    onSuccess: () => {
+      toast.success("Your comment is deleted successfully");
+      queryClient.invalidateQueries(["blog", postSlug]);
+    },
+    onError: (error) => {
+      toast.error(error.message);
+      console.log(error);
+    },
+  });
+
+  const deleteCommentHandler = (commentId) => {
+    mutateDeleteComment({ token: userState.userInfo.token, commentId });
+  };
 
   const updateCommentHandler = (value, commentId) => {
     mutateUpdateComment({
