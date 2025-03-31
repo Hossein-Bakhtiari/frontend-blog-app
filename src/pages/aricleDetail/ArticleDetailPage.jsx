@@ -156,7 +156,11 @@ const ArticleDetailPage = () => {
               {data?.title}
             </h1>
             <div className="mt-4 prose prose-sm sm:prose-base ">{body}</div>
-            <CommentsContainer classname="mt-10" logginedUserId="a" />
+            <CommentsContainer
+              classname="mt-10"
+              logginedUserId={userState?.userInfo?._id}
+              comments={data?.comments}
+            />
           </article>
           <div>
             <SuggestedPosts

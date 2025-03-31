@@ -1,5 +1,5 @@
 import { type } from "@testing-library/user-event/dist/type";
-import { images } from "../../constant";
+import { images, stables } from "../../constant";
 import { FiEdit2, FiMessageSquare, FiTrash } from "react-icons/fi";
 import CommentForm from "./CommentForm";
 const Comment = ({
@@ -29,7 +29,11 @@ const Comment = ({
   return (
     <div className="flex flex-nowrap items-start gap-x-3 bg-[#F2F4F5] p-3 rounded-lg">
       <img
-        src={images.PostProfileImage}
+        src={
+          comment?.user?.avatar
+            ? stables.UPLOAD_FOLDER_BASE_URL + comment.user.avatar
+            : images.userImage
+        }
         alt="user profile"
         className="w-9 h-9 object-cover rounded-full"
       />
