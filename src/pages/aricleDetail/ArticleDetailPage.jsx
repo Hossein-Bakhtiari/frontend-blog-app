@@ -26,42 +26,27 @@ const breadCrumpsDate = [
   { name: "Article title", Link: "/blog/1" },
 ];
 
-const postData = [
-  {
-    _id: "1",
-    image: images.PostImage,
-    title: "Help children get better education",
-    createdAt: "2023-01-28TBT15:35:35.607+0000",
-  },
-  {
-    _id: "2",
-    image: images.PostImage,
-    title: "Help children get better education",
-    createdAt: "2023-01-28TBT15:35:35.607+0000",
-  },
-  {
-    _id: "3",
-    image: images.PostImage,
-    title: "Help children get better education",
-    createdAt: "2023-01-28TBT15:35:35.607+0000",
-  },
-  {
-    _id: "4",
-    image: images.PostImage,
-    title: "Help children get better education",
-    createdAt: "2023-01-28TBT15:35:35.607+0000",
-  },
-];
-
-const tagData = [
-  "Medical",
-  "Lifestyle",
-  "Learn",
-  "Healthy",
-  "Food",
-  "Diet",
-  "Education",
-];
+// const { data, isLoading, isError } = useQuery({
+//   queryFn: () => getSinglePost({ slug }),
+//   queryKey: ["blog", slug],
+//   onSuccess: (data) => {
+//     setbreadCrumbsData([
+//       { name: "Home", link: "/" },
+//       { name: "Blog", link: "/blog" },
+//       { name: "Article title", link: `/blog/${data.slug}` },
+//     ]);
+//     console.log("hello world")
+//     setBody(
+//       parse(
+//         generateHTML(data?.body, [Bold, Italic, Document, Text, Paragraph])
+//       )
+//     );
+//     console.log("hello world")
+//     // console.log(body)
+//     // console.log(generateHTML(data?.body, [Bold, Italic, Document, Text, Paragraph]))
+//     // setBody(parseJsonToHtml(data?.body));
+//   },
+// });
 
 const ArticleDetailPage = () => {
   const { slug } = useParams();
@@ -69,27 +54,6 @@ const ArticleDetailPage = () => {
   const [breadCrumbsData, setbreadCrumbsData] = useState([]);
   const [body, setBody] = useState(null);
 
-  // const { data, isLoading, isError } = useQuery({
-  //   queryFn: () => getSinglePost({ slug }),
-  //   queryKey: ["blog", slug],
-  //   onSuccess: (data) => {
-  //     setbreadCrumbsData([
-  //       { name: "Home", link: "/" },
-  //       { name: "Blog", link: "/blog" },
-  //       { name: "Article title", link: `/blog/${data.slug}` },
-  //     ]);
-  //     console.log("hello world")
-  //     setBody(
-  //       parse(
-  //         generateHTML(data?.body, [Bold, Italic, Document, Text, Paragraph])
-  //       )
-  //     );
-  //     console.log("hello world")
-  //     // console.log(body)
-  //     // console.log(generateHTML(data?.body, [Bold, Italic, Document, Text, Paragraph]))
-  //     // setBody(parseJsonToHtml(data?.body));
-  //   },
-  // });
   const { data, isLoading, isError } = useQuery({
     queryFn: () => getSinglePost({ slug }),
     queryKey: ["blog", slug],
@@ -119,6 +83,10 @@ const ArticleDetailPage = () => {
     queryFn: () => getAllPost(),
     queryKey: ["posts"],
   });
+
+  console.log("Fetched postsData:", postsData);
+  console.log("Loading status:", isLoading);
+  console.log("Error status:", isError);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -166,8 +134,8 @@ const ArticleDetailPage = () => {
           <div>
             <SuggestedPosts
               header="Latest Article"
-              posts={postData}
-              tags={tagData}
+              posts={postsData}
+              tags={data?.tags}
               className="mt-8 lg:mt-0 max-w-xs"
             />
             <div className="mt-7">
@@ -175,8 +143,8 @@ const ArticleDetailPage = () => {
                 Share on:
               </h2>
               <SocialShareButtons
-                url={encodeURI("https://github.com/Hossein-Bakhtiari")}
-                title={encodeURIComponent("My Github")}
+                url={encodeURI(window.location.href)}
+                title={encodeURIComponent(data?.title)}
               />
             </div>
           </div>
