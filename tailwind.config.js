@@ -1,6 +1,36 @@
+// /** @type {import('tailwindcss').Config} */
+// module.exports = {
+//   content: ["./src/**/*.{js,jsx,ts,tsx}"],
+//   theme: {
+//     extend: {
+//       colors: {
+//         primary: "#1565D8",
+//         dark: {
+//           light: "#5A7184",
+//           hard: "#0D2436",
+//           soft: "#183B56",
+//         },
+//       },
+//       fontFamily: {
+//         opensans: ["Open Sans", "serif"],
+//         roboto: ["Roboto", "serif"],
+//       },
+//     },
+//   },
+//   plugins: [require("@tailwindcss/typography"), require("daisyui")],
+
+//   daisyui: {
+//     themes: [], // true: all themes | false: only light + dark | array: specific themes like this ["light", "dark", "cupcake"]
+//     base: false, // applies background color and foreground color for root element by default
+//     styled: true, // include daisyUI colors and design decisions for all components
+//     utils: true, // adds responsive and modifier utility classes
+//     prefix: "d-",
+//   },
+// };
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  content: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
   theme: {
     extend: {
       colors: {
@@ -17,5 +47,8 @@ module.exports = {
       },
     },
   },
-  plugins: [require("@tailwindcss/typography")],
+  plugins: [require("@tailwindcss/typography"), require("daisyui")],
+  daisyui: {
+    themes: ["light", "dark"], // یا true برای فعال‌سازی همه تم‌ها
+  },
 };
