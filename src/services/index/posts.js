@@ -1,10 +1,12 @@
 import axios from "axios";
 
-export const getAllPost = async () => {
+export const getAllPost = async (searchKeyWord = "", page = 1, limit = 10) => {
   try {
-    const { data } = await axios.get("http://localhost:5000/api/posts");
+    const { data, headers } = await axios.get(
+      `http://localhost:5000/api/posts?searchKeyword=${searchKeyWord}&page=${page}&limit=${limit}`
+    );
     // console.log(data);
-    return data;
+    return { data, headers };
   } catch (error) {
     if (error.response && error.response.data.message)
       throw new Error(error.response.data.message);
@@ -15,7 +17,7 @@ export const getAllPost = async () => {
 export const getSinglePost = async ({ slug }) => {
   try {
     const { data } = await axios.get(`http://localhost:5000/api/posts/${slug}`);
-    console.log(data)
+    console.log(data);
     return data;
   } catch (error) {
     if (error.response && error.response.data.message)
@@ -23,7 +25,6 @@ export const getSinglePost = async ({ slug }) => {
     throw new Error(error.message);
   }
 };
-
 
 export const createPost = async ({ token }) => {
   try {
@@ -33,7 +34,11 @@ export const createPost = async ({ token }) => {
       },
     };
 
-    const { data } = await axios.post(`http://localhost:5000/api/posts`, {}, config);
+    const { data } = await axios.post(
+      `http://localhost:5000/api/posts`,
+      {},
+      config
+    );
     return data;
   } catch (error) {
     if (error.response && error.response.data.message)
@@ -41,4 +46,3 @@ export const createPost = async ({ token }) => {
     throw new Error(error.message);
   }
 };
-
