@@ -1,9 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { getAllPost } from "../../../../services/index/posts";
 import { images, stables } from "../../../../constant";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import Pagination from "../../../../components/Pagination";
+
+let isFirstRun = true;
 
 const ManagePost = () => {
+  const [searchKeyWord, setSearchKeyWord] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  
   const {
     data: postsData = [],
     isLoading,
@@ -17,10 +23,15 @@ const ManagePost = () => {
   // console.log("Is postsData an array?", Array.isArray(postsData));
   // console.log("postsData:", postsData.data);
 
-  const [searchKeyWord, setSearchKeyWord] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  useEffect(() => {
+    if (isFirstRun) {
+      isFirstRun = false;
+      return;
+    }
+    refetch();
+  }, [refetch, currentPage]);
 
-  console.log(searchKeyWord)
+  console.log(searchKeyWord);
 
   const searchKeyWordHandler = (e) => {
     const { value } = e.target;
@@ -29,6 +40,7 @@ const ManagePost = () => {
 
   const submitSearchKeyWordHandler = (e) => {
     e.preventDefault();
+    setCurrentPage(1)
     refetch();
   };
 
@@ -177,7 +189,16 @@ const ManagePost = () => {
                   )}
                 </tbody>
               </table>
-              <div className="flex flex-col items-center px-5 py-5 bg-white xs:flex-row xs:justify-between">
+              {!isLoading && (
+                <Pagination
+                  onPageChange={(page) => setCurrentPage(page)}
+                  currentPage={currentPage}
+                  totalPageCount={JSON.parse(
+                    postsData?.headers?.["x-totalpagecount"]
+                  )}
+                />
+              )}
+              {/* <div className="flex flex-col items-center px-5 py-5 bg-white xs:flex-row xs:justify-between">
                 <div className="flex items-center">
                   <button
                     type="button"
@@ -234,7 +255,7 @@ const ManagePost = () => {
                     </svg>
                   </button>
                 </div>
-              </div>
+              </div> */}
             </div>
           </div>
         </div>
