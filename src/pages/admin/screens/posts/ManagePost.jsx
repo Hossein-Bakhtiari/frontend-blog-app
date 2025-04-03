@@ -1,15 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
-import { getAllPost } from "../../../../services/index/posts";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { deletePost, getAllPost } from "../../../../services/index/posts";
 import { images, stables } from "../../../../constant";
 import { useEffect, useState } from "react";
 import Pagination from "../../../../components/Pagination";
+import toast from "react-hot-toast";
+import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 let isFirstRun = true;
 
 const ManagePost = () => {
+  const queryClient = useQueryClient();
+  const userState = useSelector((state) => state.user);
+  console.log(userState);
   const [searchKeyWord, setSearchKeyWord] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  
+
   const {
     data: postsData = [],
     isLoading,
@@ -22,6 +28,24 @@ const ManagePost = () => {
   // console.log("Type of postsData:", typeof postsData);
   // console.log("Is postsData an array?", Array.isArray(postsData));
   // console.log("postsData:", postsData.data);
+
+  const { mutate: mutateDeletePost, isLoading: isLoadingDeletePost } =
+    useMutation({
+      mutationFn: ({ token, slug }) => {
+        return deletePost({
+          slug,
+          token,
+        });
+      },
+      onSuccess: (data) => {
+        queryClient.invalidateQueries(["posts"]);
+        toast.success("Post is Deleted");
+      },
+      onError: (error) => {
+        toast.error(error.message);
+        console.log(error);
+      },
+    });
 
   useEffect(() => {
     if (isFirstRun) {
@@ -40,8 +64,12 @@ const ManagePost = () => {
 
   const submitSearchKeyWordHandler = (e) => {
     e.preventDefault();
-    setCurrentPage(1)
+    setCurrentPage(1);
     refetch();
+  };
+
+  const deletePostHandler = ({ slug, token }) => {
+    mutateDeletePost({ slug, token });
   };
 
   return (
@@ -119,6 +147,12 @@ const ManagePost = () => {
                         Loading...
                       </td>
                     </tr>
+                  ) : postsData?.data?.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="text-center py-10 w-full">
+                        No Post Found...
+                      </td>
+                    </tr>
                   ) : (
                     postsData?.data?.map((post) => (
                       <tr>
@@ -176,13 +210,26 @@ const ManagePost = () => {
                               : "No Tags"}
                           </div>
                         </td>
-                        <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
-                          <a
-                            href="#"
-                            className="text-indigo-600 hover:text-indigo-900"
+                        <td className="px-5 py-5 text-sm bg-white border-b border-gray-200 space-x-5">
+                          <button
+                            disabled={isLoadingDeletePost}
+                            type="button"
+                            className="text-red-600 hover:text-red-900 disabled:opacity-70 disabled:cursor-not-allowed"
+                            onClick={() => {
+                              deletePostHandler({
+                                slug: post?.slug,
+                                token: userState.userInfo.token,
+                              });
+                            }}
+                          >
+                            Delete
+                          </button>
+                          <Link
+                            to={`/admin/posts/manage/edit/${post?.slug}`}
+                            className="text-green-600 hover:text-green-900"
                           >
                             Edit
-                          </a>
+                          </Link>
                         </td>
                       </tr>
                     ))
