@@ -6,7 +6,6 @@ import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
 import Italic from "@tiptap/extension-italic";
 import parse from "html-react-parser";
-import parseJsonToHtml from "../../utils/parseJsonToHtml.js";
 
 import MainLayout from "../../components/MainLayout";
 import BreadCrumps from "../../components/BreadCrumps";
@@ -20,6 +19,7 @@ import { getAllPost, getSinglePost } from "../../services/index/posts";
 import { useSelector } from "react-redux";
 import ArticleDetailSkeleton from "./components/ArticleDetailSkeleton";
 import ErrorMessage from "../../components/ErrorMessage";
+import parseJsonToHtml from "../../utils/parseJsonToHtml";
 
 const breadCrumpsDate = [
   { name: "Home", Link: "/" },
@@ -58,8 +58,15 @@ const ArticleDetailPage = () => {
   const { data, isLoading, isError } = useQuery({
     queryFn: () => getSinglePost({ slug }),
     queryKey: ["blog", slug],
+    onSuccess: (data) => {
+      setbreadCrumbsData([
+        { name: "Home", link: "/" },
+        { name: "Blog", link: "/blog" },
+        { name: "Article title", link: `/blog/${data.slug}` },
+      ]);
+      setBody(parseJsonToHtml(data?.body));
+    },
   });
-
   // useEffect(() => {
   //   if (data) {
   //     setbreadCrumbsData([
@@ -68,26 +75,28 @@ const ArticleDetailPage = () => {
   //       { name: data.title || "Article title", link: `/blog/${data.slug}` },
   //     ]);
 
-  //     setBody(parseJsonToHtml(data?.body));
+  //     setBody(
+  //       parse(generateHTML(data?.body, [Bold, Italic, Document, Text, Paragraph]))
+  //     );
   //   }
   // }, [data]); // اینجا وابستگی روی `data` گذاشتیم که فقط بعد از تغییر `data` اجرا بشه
 
-  useEffect(() => {
-    if (data) {
-      setbreadCrumbsData([
-        { name: "Home", link: "/" },
-        { name: "Blog", link: "/blog" },
-        { name: data.title || "Article title", link: `/blog/${data.slug}` },
-      ]);
-
-      // بررسی مقدار body قبل از استفاده از parseJsonToHtml
-      if (data.body && data.body.length > 0) {
-        setBody(parseJsonToHtml(data?.body.content));
-      } else {
-        setBody("No content available"); // مقدار پیش‌فرض برای جلوگیری از خطا
-      }
-    }
-  }, [data]);
+  // useEffect(() => {
+  // //   if (data) {
+  // //     setbreadCrumbsData([
+  // //       { name: "Home", link: "/" },
+  // //       { name: "Blog", link: "/blog" },
+  // //       { name: data.title || "Article title", link: `/blog/${data.slug}` },
+  // //     ]);
+  // //     console.log(data)
+  // //     // بررسی مقدار body قبل از استفاده از parseJsonToHtml
+  // //     if (data.body && data.body.content > 0) {
+  // //       setBody(parseJsonToHtml(data?.body));
+  // //     } else {
+  // //       setBody("No content available"); // مقدار پیش‌فرض برای جلوگیری از خطا
+  // //     }
+  // //   }
+  // // }, [data]);
 
   const { data: postsData } = useQuery({
     queryFn: () => getAllPost(),

@@ -61,15 +61,19 @@ const EditPost = () => {
   });
 
   useEffect(() => {
-    if (!isLoading && !isError) {
+    if (!isLoading && !isError && data) {
       setInitialPhoto(data?.photo);
 
-      // بررسی وجود data?.body و مقداردهی به body
-      if (data?.body && data.body.length > 0) {
-        // فرض بر این است که در حال تبدیل داده‌های JSON به HTML هستید
-        setBody(parseJsonToHtml(data.body));
+      console.log("data.body:", data?.body); // بررسی مقدار body در کنسول
+
+      if (data.body && Object.keys(data.body).length > 0) {
+        try {
+          setBody(parseJsonToHtml(data.body));
+        } catch (error) {
+          console.error("Error parsing JSON to HTML:", error);
+          setBody("Invalid content format");
+        }
       } else {
-        // در صورتی که body خالی باشد
         setBody("No content available");
       }
     }
