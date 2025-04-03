@@ -6,6 +6,7 @@ import Paragraph from "@tiptap/extension-paragraph";
 import Text from "@tiptap/extension-text";
 import Italic from "@tiptap/extension-italic";
 import parse from "html-react-parser";
+import parseJsonToHtml from "../../utils/parseJsonToHtml.js";
 
 import MainLayout from "../../components/MainLayout";
 import BreadCrumps from "../../components/BreadCrumps";
@@ -59,6 +60,18 @@ const ArticleDetailPage = () => {
     queryKey: ["blog", slug],
   });
 
+  // useEffect(() => {
+  //   if (data) {
+  //     setbreadCrumbsData([
+  //       { name: "Home", link: "/" },
+  //       { name: "Blog", link: "/blog" },
+  //       { name: data.title || "Article title", link: `/blog/${data.slug}` },
+  //     ]);
+
+  //     setBody(parseJsonToHtml(data?.body));
+  //   }
+  // }, [data]); // اینجا وابستگی روی `data` گذاشتیم که فقط بعد از تغییر `data` اجرا بشه
+
   useEffect(() => {
     if (data) {
       setbreadCrumbsData([
@@ -67,17 +80,14 @@ const ArticleDetailPage = () => {
         { name: data.title || "Article title", link: `/blog/${data.slug}` },
       ]);
 
-      console.log("hello world");
-
-      setBody(
-        parse(
-          generateHTML(data?.body, [Bold, Italic, Document, Text, Paragraph])
-        )
-      );
-
-      console.log("hello world");
+      // بررسی مقدار body قبل از استفاده از parseJsonToHtml
+      if (data.body && data.body.length > 0) {
+        setBody(parseJsonToHtml(data?.body.content));
+      } else {
+        setBody("No content available"); // مقدار پیش‌فرض برای جلوگیری از خطا
+      }
     }
-  }, [data]); // اینجا وابستگی روی `data` گذاشتیم که فقط بعد از تغییر `data` اجرا بشه
+  }, [data]);
 
   const { data: postsData } = useQuery({
     queryFn: () => getAllPost(),
