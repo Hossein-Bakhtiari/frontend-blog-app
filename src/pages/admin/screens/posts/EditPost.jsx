@@ -18,6 +18,7 @@ import { HiOutlineCamera } from "react-icons/hi";
 import { stables } from "../../../../constant";
 import toast from "react-hot-toast";
 import parseJsonToHtml from "../../../../utils/parseJsonToHtml";
+import Editor from "../../../../components/editor/Editor";
 
 const EditPost = () => {
   const { slug } = useParams();
@@ -63,19 +64,6 @@ const EditPost = () => {
   useEffect(() => {
     if (!isLoading && !isError && data) {
       setInitialPhoto(data?.photo);
-
-      console.log("data.body:", data?.body); // بررسی مقدار body در کنسول
-
-      if (data.body && Object.keys(data.body).length > 0) {
-        try {
-          setBody(parseJsonToHtml(data.body));
-        } catch (error) {
-          console.error("Error parsing JSON to HTML:", error);
-          setBody("Invalid content format");
-        }
-      } else {
-        setBody("No content available");
-      }
     }
   }, [data, isError, isLoading]);
 
@@ -177,7 +165,17 @@ const EditPost = () => {
             <h1 className="text-xl font-medium font-roboto mt-4 text-dark-hard md:text-[26px]">
               {data?.title}
             </h1>
-            <div className="mt-4 prose prose-sm sm:prose-base ">{body}</div>
+            <div className="w-full">
+              {!isError && !isLoading && (
+                <Editor
+                  content={data?.body}
+                  editable={true}
+                  onDataChange={(data) => {
+                    setBody(data);
+                  }}
+                />
+              )}
+            </div>
             <button
               disabled={isLoadingUpdatePostDetail}
               type="button"

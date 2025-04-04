@@ -20,6 +20,7 @@ import { useSelector } from "react-redux";
 import ArticleDetailSkeleton from "./components/ArticleDetailSkeleton";
 import ErrorMessage from "../../components/ErrorMessage";
 import parseJsonToHtml from "../../utils/parseJsonToHtml";
+import Editor from "../../components/editor/Editor";
 
 const breadCrumpsDate = [
   { name: "Home", Link: "/" },
@@ -124,7 +125,7 @@ const ArticleDetailPage = () => {
               className="rounded-xl w-full"
               src={
                 data?.photo
-                  ? stables.UPLOAD_FOLDER_BASE_URL | data?.photo
+                  ? stables.UPLOAD_FOLDER_BASE_URL + data?.photo
                   : images.samplePostImage
               }
               alt={data?.title}
@@ -142,7 +143,15 @@ const ArticleDetailPage = () => {
             <h1 className="text-xl font-medium font-roboto mt-4 text-dark-hard md:text-[26px]">
               {data?.title}
             </h1>
-            <div className="mt-4 prose prose-sm sm:prose-base ">{body}</div>
+            {!isError && !isLoading && (
+              <Editor
+                content={data?.body}
+                editable={false}
+                onDataChange={(data) => {
+                  setBody(data);
+                }}
+              />
+            )}
             <CommentsContainer
               classname="mt-10"
               logginedUserId={userState?.userInfo?._id}

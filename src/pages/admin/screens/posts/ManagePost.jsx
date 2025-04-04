@@ -55,7 +55,7 @@ const ManagePost = () => {
     refetch();
   }, [refetch, currentPage]);
 
-  console.log(searchKeyWord);
+
 
   const searchKeyWordHandler = (e) => {
     const { value } = e.target;
@@ -74,7 +74,7 @@ const ManagePost = () => {
 
   return (
     <div>
-      <button className="btn btn-primary">Click me</button>
+     
 
       <h1 className="text-2xl font-semibold">Manage Posts</h1>
       <div className="w-full px-4 mx-auto ">
@@ -163,9 +163,9 @@ const ManagePost = () => {
                                 <img
                                   alt={post.title}
                                   src={
-                                    post?.image
+                                    post?.photo
                                       ? stables.UPLOAD_FOLDER_BASE_URL +
-                                        post?.image
+                                        post?.photo
                                       : images.samplePostImage
                                   }
                                   className="mx-auto object-cover rounded-sm h-10 w-10 aspect-square"
