@@ -8,6 +8,8 @@ import css from "highlight.js/lib/languages/css";
 import js from "highlight.js/lib/languages/javascript";
 import ts from "highlight.js/lib/languages/typescript";
 import html from "highlight.js/lib/languages/xml";
+import Dropcursor from "@tiptap/extension-dropcursor";
+import Image from "@tiptap/extension-image";
 
 // ایجاد lowlight با استفاده از createLowlight
 const lowlight = createLowlight();
@@ -37,4 +39,6 @@ export const extensions = [
       ts,
     },
   }),
+  Dropcursor,
+  Image,
 ];

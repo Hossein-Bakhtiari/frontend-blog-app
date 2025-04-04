@@ -46,7 +46,7 @@ const NavItemCollapse = ({
       </div>
     </details>
 
-          /* main one */
+         /* main one */
     // <div className="d-collapse d-collapse-arrow bg-base-200 min-h-0 rounded-none py-2">
     //   <input
     //     type="checkbox"
