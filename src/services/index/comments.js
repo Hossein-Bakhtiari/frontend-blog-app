@@ -64,7 +64,10 @@ export const deleteComment = async ({ token, commentId }) => {
       },
     };
 
-    const { data } = await axios.delete(`http://localhost:5000/api/comments/${commentId}`, config);
+    const { data } = await axios.delete(
+      `http://localhost:5000/api/comments/${commentId}`,
+      config
+    );
     return data;
   } catch (error) {
     if (error.response && error.response.data.message)
