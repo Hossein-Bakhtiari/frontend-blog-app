@@ -6,76 +6,98 @@ import Pagination from "../../../../components/Pagination";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import { useDataTable } from "../../../../hooks/useDataTable";
 
 let isFirstRun = true;
 
 const ManagePost = () => {
-  const queryClient = useQueryClient();
-  const userState = useSelector((state) => state.user);
-  console.log(userState);
-  const [searchKeyWord, setSearchKeyWord] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
+  // const queryClient = useQueryClient();
+  // const userState = useSelector((state) => state.user);
+  // console.log(userState);
+  // const [searchKeyWord, setSearchKeyWord] = useState("");
+  // const [currentPage, setCurrentPage] = useState(1);
 
-  const {
-    data: postsData = [],
-    isLoading,
-    isFetching,
-    refetch,
-  } = useQuery({
-    queryFn: () => getAllPost(searchKeyWord, currentPage),
-    queryKey: ["posts"],
-  });
+  // const {
+  //   data: postsData = [],
+  //   isLoading,
+  //   isFetching,
+  //   refetch,
+  // } = useQuery({
+  //   queryFn: () => getAllPost(searchKeyWord, currentPage),
+  //   queryKey: ["posts"],
+  // });
   // console.log("Type of postsData:", typeof postsData);
   // console.log("Is postsData an array?", Array.isArray(postsData));
   // console.log("postsData:", postsData.data);
 
-  const { mutate: mutateDeletePost, isLoading: isLoadingDeletePost } =
-    useMutation({
-      mutationFn: ({ token, slug }) => {
-        return deletePost({
-          slug,
-          token,
-        });
-      },
-      onSuccess: (data) => {
-        queryClient.invalidateQueries(["posts"]);
-        toast.success("Post is Deleted");
-      },
-      onError: (error) => {
-        toast.error(error.message);
-        console.log(error);
-      },
-    });
+  // const { mutate: mutateDeletePost, isLoading: isLoadingDeletePost } =
+  //   useMutation({
+  //     mutationFn: ({ token, slug }) => {
+  //       return deletePost({
+  //         slug,
+  //         token,
+  //       });
+  //     },
+  //     onSuccess: (data) => {
+  //       queryClient.invalidateQueries(["posts"]);
+  //       toast.success("Post is Deleted");
+  //     },
+  //     onError: (error) => {
+  //       toast.error(error.message);
+  //       console.log(error);
+  //     },
+  //   });
 
-  useEffect(() => {
-    if (isFirstRun) {
-      isFirstRun = false;
-      return;
-    }
-    refetch();
-  }, [refetch, currentPage]);
+  // useEffect(() => {
+  //   if (isFirstRun) {
+  //     isFirstRun = false;
+  //     return;
+  //   }
+  //   refetch();
+  // }, [refetch, currentPage]);
 
+  // const searchKeyWordHandler = (e) => {
+  //   const { value } = e.target;
+  //   setSearchKeyWord(value);
+  // };
 
+  // const submitSearchKeyWordHandler = (e) => {
+  //   e.preventDefault();
+  //   setCurrentPage(1);
+  //   refetch();
+  // };
 
-  const searchKeyWordHandler = (e) => {
-    const { value } = e.target;
-    setSearchKeyWord(value);
-  };
+  // const deletePostHandler = ({ slug, token }) => {
+  //   mutateDeletePost({ slug, token });
+  // };
 
-  const submitSearchKeyWordHandler = (e) => {
-    e.preventDefault();
-    setCurrentPage(1);
-    refetch();
-  };
-
-  const deletePostHandler = ({ slug, token }) => {
-    mutateDeletePost({ slug, token });
-  };
+  const {
+    userState,
+    currentPage,
+    searchKeyword,
+    data: postsData,
+    isLoading,
+    isFetching,
+    isLoadingDeleteData,
+    queryClient,
+    searchKeywordHandler,
+    submitSearchKeywordHandler,
+    deleteDataHandler,
+    setCurrentPage,
+  } = useDataTable({
+    dataQueryFn: () => getAllPost(searchKeyword, currentPage),
+    dataQueryKey: "posts",
+    deleteDataMessage: "Post is deleted",
+    mutateDeleteFn: ({ slug, token }) => {
+      return deletePost({
+        slug,
+        token,
+      });
+    },
+  });
 
   return (
     <div>
-     
-
       <h1 className="text-2xl font-semibold">Manage Posts</h1>
       <div className="w-full px-4 mx-auto ">
         <div className="py-8">
@@ -83,7 +105,7 @@ const ManagePost = () => {
             <h2 className="text-2xl leading-tight">Users</h2>
             <div className="text-end">
               <form
-                onSubmit={submitSearchKeyWordHandler}
+                onSubmit={submitSearchKeywordHandler}
                 className="flex flex-col justify-center w-3/4 max-w-sm space-y-3 md:flex-row md:w-full md:space-x-3 md:space-y-0"
               >
                 <div className=" relative ">
@@ -92,8 +114,8 @@ const ManagePost = () => {
                     id='"form-subscribe-Filter'
                     className=" rounded-lg border-transparent flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
                     placeholder="Post Title..."
-                    onChange={searchKeyWordHandler}
-                    value={searchKeyWord}
+                    onChange={searchKeywordHandler}
+                    value={searchKeyword}
                   />
                 </div>
                 <button
@@ -114,25 +136,25 @@ const ManagePost = () => {
                       scope="col"
                       className="px-5 py-3 text-sm font-normal text-left text-gray-800 uppercase bg-white border-b border-gray-200"
                     >
-                      User
+                      TITLE
                     </th>
                     <th
                       scope="col"
                       className="px-5 py-3 text-sm font-normal text-left text-gray-800 uppercase bg-white border-b border-gray-200"
                     >
-                      Role
+                      CATEGORY
                     </th>
                     <th
                       scope="col"
                       className="px-5 py-3 text-sm font-normal text-left text-gray-800 uppercase bg-white border-b border-gray-200"
                     >
-                      Created at
+                      CREATED AT
                     </th>
                     <th
                       scope="col"
                       className="px-5 py-3 text-sm font-normal text-left text-gray-800 uppercase bg-white border-b border-gray-200"
                     >
-                      status
+                      TAGS
                     </th>
                     <th
                       scope="col"
@@ -181,9 +203,19 @@ const ManagePost = () => {
                         </td>
                         <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
                           <p className="text-gray-900 whitespace-no-wrap">
-                            {/* {post.categories.length > 0
-                              ? post.categories.index[0]
-                              : "Uncategorized"} */}
+                            {post.categories.length > 0
+                              ? post.categories
+                                  .slice(0, 3)
+                                  .map(
+                                    (category, index) =>
+                                      `${category.title}${
+                                        post.categories.slice(0, 3).length ===
+                                        index + 1
+                                          ? ""
+                                          : ", "
+                                      }`
+                                  )
+                              : "Uncategorized"}
                           </p>
                         </td>
                         <td className="px-5 py-5 text-sm bg-white border-b border-gray-200">
@@ -212,11 +244,11 @@ const ManagePost = () => {
                         </td>
                         <td className="px-5 py-5 text-sm bg-white border-b border-gray-200 space-x-5">
                           <button
-                            disabled={isLoadingDeletePost}
+                            disabled={isLoadingDeleteData}
                             type="button"
                             className="text-red-600 hover:text-red-900 disabled:opacity-70 disabled:cursor-not-allowed"
                             onClick={() => {
-                              deletePostHandler({
+                              deleteDataHandler({
                                 slug: post?.slug,
                                 token: userState.userInfo.token,
                               });
