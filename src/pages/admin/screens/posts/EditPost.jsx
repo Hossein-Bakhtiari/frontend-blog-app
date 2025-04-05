@@ -5,6 +5,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import ArticleDetailSkeleton from "../../../aricleDetail/components/ArticleDetailSkeleton";
 import ErrorMessage from "../../../../components/ErrorMessage";
 import { useSelector } from "react-redux";
+import CreatableSelect from "react-select/creatable";
 
 import { generateHTML } from "@tiptap/html";
 import Bold from "@tiptap/extension-bold";
@@ -76,9 +77,16 @@ const EditPost = () => {
     if (!isLoading && !isError && data) {
       setInitialPhoto(data?.photo);
       setCategories(data.categories.map((item) => item.value));
+      console.log("data is:", data);
+      setInitialPhoto(data?.photo);
+      setCategories(data.categories.map((item) => item.value));
+      setTitle(data.title);
+      setTags(data.tags);
+      setCaption(data.caption);
     }
   }, [data, isError, isLoading]);
   console.log("data is:", data);
+
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setPhoto(file);
@@ -176,10 +184,62 @@ const EditPost = () => {
                 </Link>
               ))}
             </div>
-            <h1 className="text-xl font-medium font-roboto mt-4 text-dark-hard md:text-[26px]">
-              {data?.title}
-            </h1>
-            <div className="my-5">
+            <div className="d-form-control w-full">
+              <label className="d-label" htmlFor="title">
+                <span className="d-label-text font-roboto font-semibold">
+                  Title
+                </span>
+              </label>
+              <input
+                id="title"
+                value={title}
+                className="d-input d-input-bordered border-slate-300 !outline-slate-300 text-xl font-medium font-roboto text-dark-hard"
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="title"
+              />
+            </div>
+
+            <div className="d-form-control w-full">
+              <label className="d-label" htmlFor="caption">
+                <span className="d-label-text font-roboto font-semibold">
+                  caption
+                </span>
+              </label>
+              <input
+                id="caption"
+                value={caption}
+                className="d-input d-input-bordered border-slate-300 !outline-slate-300 text-xl font-medium font-roboto text-dark-hard"
+                onChange={(e) => setCaption(e.target.value)}
+                placeholder="caption"
+              />
+            </div>
+
+            <div className="d-form-control w-full mb-5 mt-2">
+              <label className="d-label" htmlFor="slug">
+                <span className="d-label-text  font-roboto font-semibold">
+                  slug
+                </span>
+              </label>
+              <input
+                id="slug"
+                value={postSlug}
+                className="d-input d-input-bordered border-slate-300 !outline-slate-300 text-xl font-medium font-roboto text-dark-hard"
+                onChange={(e) =>
+                  setPostSlug(e.target.value.replace(/\s+/g, "-").toLowerCase())
+                }
+                placeholder="post slug"
+              />
+            </div>
+
+            {/* <h1 className="text-xl font-medium font-roboto mt-4 text-dark-hard md:text-[26px]">
+              {title}
+            </h1> */}
+            <div className="mb-5 mt-2">
+              <label className="d-label">
+                <span className="d-label-text font-roboto font-semibold">
+                  categories
+                </span>
+              </label>
               {isPostDataLoaded && (
                 <MultiSelectTagDropdown
                   loadOptions={promiseOptions}
@@ -187,6 +247,27 @@ const EditPost = () => {
                   onChange={(newValue) =>
                     setCategories(newValue.map((item) => item.value))
                   }
+                />
+              )}
+            </div>
+
+            <div className="mb-7 mt-2">
+              <label className="d-label">
+                <span className="d-label-text font-roboto font-semibold">
+                  tags
+                </span>
+              </label>
+              {isPostDataLoaded && (
+                <CreatableSelect
+                  defaultValue={data.tags.map((tag) => ({
+                    value: tag,
+                    label: tag,
+                  }))}
+                  isMulti
+                  onChange={(newValue) =>
+                    setTags(newValue.map((item) => item.value))
+                  }
+                  className="relative z-20"
                 />
               )}
             </div>
