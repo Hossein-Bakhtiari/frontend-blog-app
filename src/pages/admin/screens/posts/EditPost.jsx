@@ -19,6 +19,17 @@ import { stables } from "../../../../constant";
 import toast from "react-hot-toast";
 import parseJsonToHtml from "../../../../utils/parseJsonToHtml";
 import Editor from "../../../../components/editor/Editor";
+import MultiSelectTagDropdown from "../../components/select-dropdown/MultiSelectTagDropdown";
+import {
+  categoryToOption,
+  filterCategories,
+} from "../../../../utils/multiSelectTagUtils";
+import { getAllCategories } from "../../../../services/index/postCategories";
+
+const promiseOptions = async (inputValue) => {
+  const { data: categoriesData } = await getAllCategories();
+  return filterCategories(inputValue, categoriesData);
+};
 
 const EditPost = () => {
   const { slug } = useParams();
@@ -64,9 +75,10 @@ const EditPost = () => {
   useEffect(() => {
     if (!isLoading && !isError && data) {
       setInitialPhoto(data?.photo);
+      setCategories(data.categories.map((item) => item.value));
     }
   }, [data, isError, isLoading]);
-
+  console.log("data is:", data);
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setPhoto(file);
@@ -109,6 +121,8 @@ const EditPost = () => {
       setPhoto(null);
     }
   };
+
+  let isPostDataLoaded = !isLoading && !isError;
 
   return (
     <div>
@@ -165,8 +179,20 @@ const EditPost = () => {
             <h1 className="text-xl font-medium font-roboto mt-4 text-dark-hard md:text-[26px]">
               {data?.title}
             </h1>
+            <div className="my-5">
+              {isPostDataLoaded && (
+                <MultiSelectTagDropdown
+                  loadOptions={promiseOptions}
+                  defaultValue={data.categories.map(categoryToOption)}
+                  onChange={(newValue) =>
+                    setCategories(newValue.map((item) => item.value))
+                  }
+                />
+              )}
+            </div>
+
             <div className="w-full">
-              {!isError && !isLoading && (
+              {isPostDataLoaded && (
                 <Editor
                   content={data?.body}
                   editable={true}
