@@ -13,6 +13,7 @@ import ManagePost from "./pages/admin/screens/posts/ManagePost";
 import EditPost from "./pages/admin/screens/posts/EditPost";
 import Categories from "./pages/admin/screens/categories/Categories";
 import EditCategories from "./pages/admin/screens/categories/EditCategories";
+import Users from "./pages/admin/screens/users/Users";
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
             element={<EditCategories />}
           />
           <Route path="posts/manage/edit/:slug" element={<EditPost />} />
+          <Route path="users/manage" element={<Users />} />
         </Route>
       </Routes>
       <Toaster />
