@@ -1,9 +1,16 @@
 import axios from "axios";
 
-export const getAllPost = async (searchKeyWord = "", page = 1, limit = 4) => {
+export const getAllPost = async (
+  searchKeyWord = "",
+  page = 1,
+  limit = 4,
+  categories = []
+) => {
   try {
     const { data, headers } = await axios.get(
-      `http://localhost:5000/api/posts?searchKeyword=${searchKeyWord}&page=${page}&limit=${limit}`
+      `http://localhost:5000/api/posts?searchKeyword=${searchKeyWord}&page=${page}&limit=${limit}&categories=${categories.join(
+        ","
+      )}`
     );
     // console.log(data);
     return { data, headers };
@@ -59,7 +66,7 @@ export const deletePost = async ({ slug, token }) => {
       `http://localhost:5000/api/posts/${slug}`,
       config
     );
-    console.log(data)
+    console.log(data);
     return data;
   } catch (error) {
     if (error.response && error.response.data.message)
