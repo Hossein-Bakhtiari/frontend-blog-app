@@ -1,20 +1,21 @@
 import React, { useState } from "react";
 import Cropper from "react-easy-crop";
+
 import getCroppedImg from "./cropImage";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateProfilePicture } from "../../services/index/users";
 import { useDispatch, useSelector } from "react-redux";
 import { userActions } from "../../store/reducers/userReducer";
-import toast from "react-hot-toast";
+import { toast } from "react-hot-toast";
 
-const CropeEasy = ({ photo, openCrop, setOpenCrop }) => {
+const CropEasy = ({ photo, setOpenCrop }) => {
   const userState = useSelector((state) => state.user);
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const [crop, setCrop] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
+  const [zoom, setzoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
-  
+
   const { mutate, isLoading } = useMutation({
     mutationFn: ({ token, formData }) => {
       return updateProfilePicture({
@@ -35,14 +36,15 @@ const CropeEasy = ({ photo, openCrop, setOpenCrop }) => {
     },
   });
 
-  const handleCropComplete = (cropedArea, cropedAreaPixles) => {
-    setCroppedAreaPixels(cropedAreaPixles);
+  const handleCropComplete = (cropedArea, cropedAreaPixels) => {
+    setCroppedAreaPixels(cropedAreaPixels);
   };
 
   const handleCropImage = async () => {
     try {
       const croppedImg = await getCroppedImg(photo?.url, croppedAreaPixels);
-      const file = new File([croppedImg.file], `${photo?.file?.name} `, {
+
+      const file = new File([croppedImg.file], `${photo?.file?.name}`, {
         type: photo?.file?.type,
       });
 
@@ -52,7 +54,7 @@ const CropeEasy = ({ photo, openCrop, setOpenCrop }) => {
       mutate({ token: userState.userInfo.token, formData: formData });
     } catch (error) {
       toast.error(error.message);
-      console.log(error.message);
+      console.log(error);
     }
   };
 
@@ -66,7 +68,7 @@ const CropeEasy = ({ photo, openCrop, setOpenCrop }) => {
             crop={crop}
             zoom={zoom}
             aspect={1}
-            onZoomChange={setZoom}
+            onZoomChange={setzoom}
             onCropChange={setCrop}
             onCropComplete={handleCropComplete}
           />
@@ -74,7 +76,7 @@ const CropeEasy = ({ photo, openCrop, setOpenCrop }) => {
         <div>
           <label
             htmlFor="zoomRage"
-            className="block mt-2 mb-0.05 text-sm font-medium text-gray-900"
+            className="block mt-2 mb-0.5 text-sm font-medium text-gray-900"
           >
             Zoom: {`${Math.round(zoom * 100)}%`}
           </label>
@@ -85,8 +87,8 @@ const CropeEasy = ({ photo, openCrop, setOpenCrop }) => {
             max={3}
             step={0.1}
             value={zoom}
-            onChange={(e) => setZoom(e.target.value)}
-            className="w-full h-1 mb-6 bg-gray-200 rounded-lg appearance-none cursor-pointer range-sm "
+            onChange={(e) => setzoom(e.target.value)}
+            className="w-full h-1 mb-6 bg-gray-200 rounded-lg appearance-none cursor-pointer range-sm"
           />
         </div>
         <div className="flex justify-between gap-2 flex-wrap">
@@ -100,7 +102,7 @@ const CropeEasy = ({ photo, openCrop, setOpenCrop }) => {
           <button
             disabled={isLoading}
             onClick={handleCropImage}
-            className="px-5 py-2.5 rounded-lg text-white  bg-blue-500 text-sm disabled:opacity-70"
+            className="px-5 py-2.5 rounded-lg text-white bg-blue-500 text-sm disabled:opacity-70"
           >
             Crop & Upload
           </button>
@@ -110,4 +112,4 @@ const CropeEasy = ({ photo, openCrop, setOpenCrop }) => {
   );
 };
 
-export default CropeEasy;
+export default CropEasy;

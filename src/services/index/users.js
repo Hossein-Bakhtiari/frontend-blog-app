@@ -55,7 +55,7 @@ export const getUserProfile = async ({ token }) => {
   }
 };
 
-export const updateProfile = async ({ token, userData }) => {
+export const updateProfile = async ({ token, userData, userId }) => {
   try {
     const config = {
       headers: {
@@ -64,7 +64,7 @@ export const updateProfile = async ({ token, userData }) => {
     };
 
     const { data } = await axios.put(
-      "http://localhost:5000/api/users/updateProfile",
+      `http://localhost:5000/api/users/updateProfile/${userId}`,
       userData,
       config
     );
@@ -77,32 +77,25 @@ export const updateProfile = async ({ token, userData }) => {
   }
 };
 
-export const updateProfilePicture = async ({ token, file }) => {
-  const formData = new FormData();
-  formData.append("profilePicture", file);
-
+export const updateProfilePicture = async ({ token, formData }) => {
   try {
-    const response = await fetch(
+    const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
+      },
+    };
+
+    const { data } = await axios.put(
       "http://localhost:5000/api/users/updateProfilePicture",
-      {
-        method: "PUT",
-        body: formData,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+      formData,
+      config
     );
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || "Failed to update profile picture");
-    }
-
-    const data = await response.json();
     return data;
   } catch (error) {
-    console.error("Error updating profile picture:", error);
-    throw error;
+    if (error.response && error.response.data.message)
+      throw new Error(error.response.data.message);
+    throw new Error(error.message);
   }
 };
 

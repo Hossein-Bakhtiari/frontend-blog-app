@@ -1,13 +1,15 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getUserProfile, updateProfile } from "../../services/index/users.js";
-import MainLayout from "../../components/MainLayout.jsx";
-import ProfilePicture from "../../components/ProfilePicture.jsx";
-import toast from "react-hot-toast";
-import { userActions } from "../../store/reducers/userReducer.js";
+
+import MainLayout from "../../components/MainLayout";
+import { getUserProfile, updateProfile } from "../../services/index/users";
+import ProfilePicture from "../../components/ProfilePicture";
+import { userActions } from "../../store/reducers/userReducer";
+import { toast } from "react-hot-toast";
+import { useMemo } from "react";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -15,26 +17,19 @@ const ProfilePage = () => {
   const queryClient = useQueryClient();
   const userState = useSelector((state) => state.user);
 
-  const {
-    data: profileData,
-    isLoading: profileIsLoading,
-    error: profileError,
-  } = useQuery({
+  const { data: profileData, isLoading: profileIsLoading } = useQuery({
     queryFn: () => {
       return getUserProfile({ token: userState.userInfo.token });
     },
     queryKey: ["profile"],
   });
 
-  const { mutate, isLoading: updateProfileISLoading } = useMutation({
+  const { mutate, isLoading: updateProfileIsLoading } = useMutation({
     mutationFn: ({ name, email, password }) => {
       return updateProfile({
         token: userState.userInfo.token,
-        userData: {
-          name,
-          email,
-          password,
-        },
+        userData: { name, email, password },
+        userId: userState.userInfo._id,
       });
     },
     onSuccess: (data) => {
@@ -74,8 +69,6 @@ const ProfilePage = () => {
     mode: "onChange",
   });
 
-
-  
   const submitHandler = (data) => {
     const { name, email, password } = data;
     mutate({ name, email, password });
@@ -174,7 +167,7 @@ const ProfilePage = () => {
             </div>
             <button
               type="submit"
-              disabled={!isValid || profileIsLoading || updateProfileISLoading}
+              disabled={!isValid || profileIsLoading || updateProfileIsLoading}
               className="bg-primary text-white font-bold text-lg py-4 px-8 w-full rounded-lg mb-6 disabled:opacity-70 disabled:cursor-not-allowed"
             >
               Update

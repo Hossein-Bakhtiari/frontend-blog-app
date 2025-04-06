@@ -1,26 +1,21 @@
 import React, { useState } from "react";
-import stables from "../constant/stables";
-import { HiOutlineCamera } from "react-icons/hi";
-import CropeEasy from "./crop/CropeEasy";
 import { createPortal } from "react-dom";
-import toast from "react-hot-toast";
+import { HiOutlineCamera } from "react-icons/hi";
+
+import { stables } from "../constant";
+import CropEasy from "./crop/CropeEasy";
+import { toast } from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateProfilePicture } from "../services/index/users";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { userActions } from "../store/reducers/userReducer";
 
 const ProfilePicture = ({ avatar }) => {
-  const userState = useSelector((state) => state.user);
-  const dispatch = useDispatch();
   const queryClient = useQueryClient();
+  const dispatch = useDispatch();
+  const userState = useSelector((state) => state.user);
   const [openCrop, setOpenCrop] = useState(false);
   const [photo, setPhoto] = useState(null);
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    setPhoto({ url: URL.createObjectURL(file), file });
-    setOpenCrop(true);
-  };
 
   const { mutate, isLoading } = useMutation({
     mutationFn: ({ token, formData }) => {
@@ -42,8 +37,14 @@ const ProfilePicture = ({ avatar }) => {
     },
   });
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setPhoto({ url: URL.createObjectURL(file), file });
+    setOpenCrop(true);
+  };
+
   const handleDeleteImage = () => {
-    if (window.confirm("Do you want to delete your profile picture?")) {
+    if (window.confirm("Do you want to delete your profile picture")) {
       try {
         const formData = new FormData();
         formData.append("profilePicture", undefined);
@@ -51,33 +52,21 @@ const ProfilePicture = ({ avatar }) => {
         mutate({ token: userState.userInfo.token, formData: formData });
       } catch (error) {
         toast.error(error.message);
-        console.log(error.message);
+        console.log(error);
       }
     }
   };
-  // const handleFileChange = (e) => {
-  //   console.log("Selected files:", e.target.files);
-  //   const file = e.target.files[0];
-
-  //   if (!file) {
-  //     console.error("No file selected");
-  //     return;
-  //   }
-
-  //   setPhoto({ url: URL.createObjectURL(file), file });
-  //   setOpenCrop(true);
-  // };
 
   return (
     <>
       {openCrop &&
         createPortal(
-          <CropeEasy photo={photo} setOpenCrop={setOpenCrop} />,
+          <CropEasy photo={photo} setOpenCrop={setOpenCrop} />,
           document.getElementById("portal")
         )}
 
       <div className="w-full flex items-center gap-x-4">
-        <div className="relative w-20 h-20 rounded-full outline outline-offset-2 outline-1 outline-primary overflow-hidden">
+        <div className="relative w-20 h-20 rounded-full outline outline-offset-2 outline-1 lutline-primary overflow-hidden">
           <label
             htmlFor="profilePicture"
             className="cursor-pointer absolute inset-0 rounded-full bg-transparent"
@@ -89,7 +78,7 @@ const ProfilePicture = ({ avatar }) => {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full bg-blue-50/50 flex justify-center items-center ">
+              <div className="w-full h-full bg-blue-50/50 flex justify-center items-center">
                 <HiOutlineCamera className="w-7 h-auto text-primary" />
               </div>
             )}
